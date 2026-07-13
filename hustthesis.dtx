@@ -3289,12 +3289,15 @@
 % 脚注正文采用小五号、单倍行距；同时覆盖普通脚注与
 % minipage 脚注。
 %    \begin{macrocode}
-\@@_patch_cmd:Nnn \@footnotetext
-	{ \reset@font \footnotesize }
-	{ \reset@font \zihao { -5 } \rmfamily \@@_line_spread:n { 1 } }
-\@@_patch_cmd:Nnn \@mpfootnotetext
-	{ \reset@font \footnotesize }
-	{ \reset@font \zihao { -5 } \rmfamily \@@_line_spread:n { 1 } }
+\AddToHook { begindocument / end }
+	{
+		\@@_patch_cmd:Nnn \@footnotetext
+			{ \reset@font \footnotesize }
+			{ \reset@font \zihao { -5 } \rmfamily \@@_line_spread:n { 1 } }
+		\@@_patch_cmd:Nnn \@mpfootnotetext
+			{ \reset@font \footnotesize }
+			{ \reset@font \zihao { -5 } \rmfamily \@@_line_spread:n { 1 } }
+	}
 \dim_set:Nn \footnotesep { 10.8 bp }
 %    \end{macrocode}
 %
