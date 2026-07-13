@@ -1,0 +1,52 @@
+\input regression-test.tex
+\documentclass[type=doctor]{hustthesis}
+\ExplSyntaxOn
+\msg_redirect_module:nnn { fontspec } { info } { none }
+\ExplSyntaxOff
+
+\begin{document}
+\START
+
+\TYPE{paper-width=\the\paperwidth}
+\TYPE{paper-height=\the\paperheight}
+\TYPE{text-width=\the\textwidth}
+\TYPE{text-height=\the\textheight}
+\TYPE{odd-side-margin=\the\oddsidemargin}
+\TYPE{top-margin=\the\topmargin}
+\TYPE{head-height=\the\headheight}
+\TYPE{head-sep=\the\headsep}
+\TYPE{foot-skip=\the\footskip}
+\TYPE{body-parindent=\the\parindent}
+\TYPE{head-rule=\headrulewidth}
+\TYPE{foot-rule=\footrulewidth}
+\TYPE{booktabs-heavy=\the\heavyrulewidth}
+\TYPE{booktabs-light=\the\lightrulewidth}
+
+\frontmatter
+\TYPE{front-page=\thepage}
+\setcounter{page}{2}
+\begin{abstract}
+  \TYPE{abstract-start-page=\thepage}
+  摘要。
+\end{abstract}
+\setcounter{page}{4}
+\tableofcontents
+\TYPE{toc-start-page=\thepage}
+
+\mainmatter
+\TYPE{main-page=\thepage}
+\chapter{正文}
+\section{二级标题}
+\subsection{三级标题}
+\refstepcounter{equation}
+\TYPE{equation-number=\theequation}
+
+\backmatter
+\appendix
+\chapter{附录一}
+\section{附录节}
+\TYPE{appendix-chapter=\thechapter}
+\TYPE{appendix-section=\thesection}
+
+\END
+\end{document}

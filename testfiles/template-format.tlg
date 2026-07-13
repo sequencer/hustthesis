@@ -1,0 +1,34 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+paper-width=597.50787pt
+paper-height=845.04684pt
+text-width=438.17227pt
+text-height=637.34164pt
+odd-side-margin=7.39781pt
+top-margin=5.89362pt
+head-height=30.0pt
+head-sep=19.8738pt
+foot-skip=30.0pt
+body-parindent=24.09pt
+head-rule=1pt
+foot-rule=0.75pt
+booktabs-heavy=1.50562pt
+booktabs-light=0.7528pt
+front-page=I
+[2
+]
+abstract-start-page=III
+[4
+] (template-format.toc)
+\tf@toc=\write...
+toc-start-page=V
+[5
+]
+main-page=1
+1
+equation-number=1.1
+[1
+]
+附录\kern 0pt1
+appendix-chapter=1
+appendix-section=1.1

@@ -1332,6 +1332,7 @@
 		graphicx,
 		multirow,
 		longtable,
+		booktabs,
 		caption,
 		utfsym,
 	}
@@ -1358,12 +1359,21 @@
 %    \begin{macrocode}
 \geometry
 	{
+		a4paper,
 		top = 4.5 cm,
 		bottom = 2.8 cm,
 		left = 2.8 cm,
 		right = 2.8 cm,
 		headheight = 30 pt,
 	}
+%    \end{macrocode}
+
+% 正文采用小四号、1.5 倍行距、首行缩进两个汉字且段间不额外留白。
+% 字号和行距已由文档类选项设置，此处显式固定段落参数，避免用户字体集
+% 或宏包改变默认值。
+%    \begin{macrocode}
+\dim_set:Nn \parindent { 2 em }
+\skip_zero:N \parskip
 %    \end{macrocode}
 %
 % \subsection{字体设置}
@@ -1996,13 +2006,15 @@
 %  {
 		\chead
 			{
-				\zihao{3} \ziju{0.75} \bfseries \kaishu
+				\fontsize { 18 bp } { 21.6 bp } \selectfont
+				\ziju { 0.45 } \bfseries \kaishu
 				\color_group_begin:
 				\color_select:n { headfoot }
 				\c_@@_header_tl
 				\color_group_end:
 			}
 %  }
+\fancyheadoffset [ L, R ] { 3 mm }
 \tl_set:Nn { \headrulewidth } { 1 pt }
 \tl_set:Nn { \headrule }
 	{
@@ -2016,7 +2028,8 @@
 % 设置页脚格式。
 %    \begin{macrocode}
 \cfoot { \zihao{-5} \thepage }
-\tl_set:Nn { \footrulewidth } { 0.5 pt }
+\fancyfootoffset [ L, R ] { 4 mm }
+\tl_set:Nn { \footrulewidth } { 0.75 pt }
 \tl_set:Nn { \footrule }
 	{
 		\@@_draw_hf_hline:n \footrulewidth
@@ -2956,6 +2969,23 @@
 %
 % 定义从摘要到目录的样式，即有页眉页脚，含有大写罗马数字页码页的样式。
 %
+% \begin{macro}{\@@_clear_to_odd_page:}
+% 摘要和目录均从奇数页开始；文档类使用单面模式，不能依赖
+% \tn{cleardoublepage} 自动补空白页。
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_clear_to_odd_page:
+	{
+		\clearpage
+		\int_if_odd:nF { \value { page } }
+			{
+				\thispagestyle { empty }
+				\null
+				\clearpage
+			}
+	}
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\frontmatter}
 %    \begin{macrocode}
 \@@_appto_cmd:Nn \frontmatter
@@ -2974,12 +3004,21 @@
 %    \begin{macrocode}
 \NewDocumentEnvironment { abstract } { }
 	{
+		\@@_clear_to_odd_page:
 		\chapter**{\c_@@_name_abstract_zh_tl}
+		\zihao { -4 } \rmfamily \songti
+		\@@_line_spread:n { 1.45 }
+		\dim_set:Nn \parindent { 2 em }
+		\skip_zero:N \parskip
 	}
 	{ }
 \NewDocumentEnvironment { abstract* } { }
 	{
 		\chapter**{\c_@@_name_abstract_en_tl}
+		\zihao { -4 } \rmfamily
+		\@@_line_spread:n { 1.5 }
+		\dim_set:Nn \parindent { 2 em }
+		\skip_zero:N \parskip
 	}
 	{ }
 %    \end{macrocode}
@@ -3015,6 +3054,8 @@
 %
 %    \begin{macrocode}
 \tl_set:Nn \contentsname { 目\hspace{1em}录 }
+\AddToHook { cmd / tableofcontents / before }
+	{ \@@_clear_to_odd_page: }
 %    \end{macrocode}
 %
 % \begin{macro}[module=style/]{style/toc-depth}
@@ -3083,15 +3124,17 @@
 		\@@_toc_format:nnnn
 			{ chapter }
 			{ 1 em}
-			{ \zihao{4} \bfseries \rmfamily \heiti }
-			{ \mdseries \ddotfill \thecontentspage }
+			{ \fontsize { 14 bp } { 25 bp } \selectfont
+				\bfseries \rmfamily \songti }
+			{ \mdseries \hfill (\thecontentspage) }
 		}
 \cs_new_protected:Npn \@@_toc_chapter_mainmatter:
 	{
 		\@@_toc_format:nnnn
 			{ chapter }
 			{ 1 em }
-			{ \zihao{4} \bfseries \rmfamily \heiti }
+			{ \fontsize { 14 bp } { 25 bp } \selectfont
+				\bfseries \rmfamily \songti }
 			{ \mdseries \hfill (\thecontentspage) }
 	}
 \cs_new_protected:Npn \@@_toc_chapter_backmatter:
@@ -3099,8 +3142,9 @@
 		\@@_toc_format:nnnn
 			{ chapter }
 			{ 1 em }
-			{ \zihao{4} \bfseries \rmfamily \heiti }
-			{ \mdseries \ddotfill (\thecontentspage) }
+			{ \fontsize { 14 bp } { 25 bp } \selectfont
+				\bfseries \rmfamily \songti }
+			{ \mdseries \hfill (\thecontentspage) }
 	}
 %    \end{macrocode}
 % \end{macro}
@@ -3110,12 +3154,12 @@
 \@@_toc_format:nnnn
 	{ section }
 	{ 2 em }
-	{ \zihao{4} \rmfamily }
+	{ \fontsize { 14 bp } { 25 bp } \selectfont \rmfamily }
 	{ \ddotfill (\thecontentspage) }
 \@@_toc_format:nnnn
 	{ subsection }
 	{ 2 em }
-	{ \zihao{4} \rmfamily }
+	{ \fontsize { 14 bp } { 25 bp } \selectfont \rmfamily }
 	{ \ddotfill (\thecontentspage) }
 %    \end{macrocode}
 %
@@ -3141,7 +3185,8 @@
 %    \begin{macrocode}
 		chapter =
 			{
-				format = \zihao{3} \bfseries \rmfamily \heiti \centering \linespread{1.5},
+				format = \zihao{3} \bfseries \rmfamily \heiti \centering
+					\@@_line_spread:n { 1.5 },
 				name = {},
 				beforeskip = 15.5 bp,
 				afterskip = 14 bp + \CTEX@chapter@lofskip,
@@ -3151,14 +3196,16 @@
 			},
 		section =
 			{
-				format = \zihao{4} \bfseries \rmfamily \heiti \raggedright,
+				format = \zihao{4} \bfseries \rmfamily \heiti \raggedright
+					\@@_line_spread:n { 1.5 },
 				numberformat = \rmfamily,
 				beforeskip = 10 bp,
 				afterskip = 7 bp,
 			},
 		subsection =
 			{
-				format = \zihao{-4} \bfseries \rmfamily \heiti \raggedright,
+				format = \zihao{-4} \bfseries \rmfamily \heiti \raggedright
+					\@@_line_spread:n { 1.5 },
 				numberformat = \rmfamily,
 				beforeskip = 7 bp,
 				afterskip = 4 bp,
@@ -3195,6 +3242,61 @@
 	}
 %    \end{macrocode}
 % \end{macro}
+%
+% \subsection{图表、公式与脚注样式}
+%
+% 图题和表题采用五号字居中，编号与题名之间空两个西文空格
+% （约半个汉字宽），不使用冒号。
+%    \begin{macrocode}
+\DeclareCaptionFont { hustthesis }
+	{
+		\fontsize { 10.5 bp } { 15.75 bp } \selectfont
+		\mdseries \upshape \rmfamily \songti
+	}
+\DeclareCaptionLabelSeparator { hustthesis } { \hspace { 0.5 em } }
+\captionsetup
+	{
+		font = hustthesis,
+		labelsep = hustthesis,
+		justification = centering,
+		singlelinecheck = false,
+	}
+%    \end{macrocode}
+%
+% 三线表的顶、底线为 1.5 磅，中线为 0.75 磅。
+%    \begin{macrocode}
+\dim_set:Nn \heavyrulewidth { 1.5 bp }
+\dim_set:Nn \lightrulewidth { 0.75 bp }
+\dim_set:Nn \cmidrulewidth { 0.75 bp }
+%    \end{macrocode}
+%
+% 公式按章编号，编号使用中文全角圆括号。标准文档类已将公式计数器
+% 按章重置并放在行末，此处只调整括号外观。
+%    \begin{macrocode}
+\cs_set:Npn \tagform@ #1
+	{
+		\use:c
+			{
+				maketag
+				\char_generate:nn { 64 } { 11 }
+				\char_generate:nn { 64 } { 11 }
+				\char_generate:nn { 64 } { 11 }
+			}
+			{ （ \ignorespaces #1 \unskip ） }
+	}
+%    \end{macrocode}
+%
+% 脚注正文采用小五号、单倍行距；同时覆盖普通脚注与
+% minipage 脚注。
+%    \begin{macrocode}
+\@@_patch_cmd:Nnn \@footnotetext
+	{ \reset@font \footnotesize }
+	{ \reset@font \zihao { -5 } \rmfamily \@@_line_spread:n { 1 } }
+\@@_patch_cmd:Nnn \@mpfootnotetext
+	{ \reset@font \footnotesize }
+	{ \reset@font \zihao { -5 } \rmfamily \@@_line_spread:n { 1 } }
+\dim_set:Nn \footnotesep { 10.8 bp }
+%    \end{macrocode}
 %
 % \section{后文样式}
 %
@@ -3239,13 +3341,16 @@
 %    \begin{macrocode}
 \@@_appto_cmd:Nn \appendix
 	{
+		\@mainmattertrue
+		\cs_set:Npn \thechapter { \arabic { chapter } }
 	}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
 \keys_set:nn { ctex / appendix }
 	{
-		number = \arabic{chapter},
+		name = { 附录 },
+		number = \kern 0 pt \arabic{chapter},
 	}
 %    \end{macrocode}
 %
@@ -3463,8 +3568,8 @@
 		{ author } { Candidate } { 学\hfill 位\hfill 申\hfill 请\hfill 人 },
 %</def-m>
 %<*def-d>
-		{ academic } { The~ Degree~ of~ Doctor~ of } { 学术型 },
-		{ professional } { The~ Degree~ of~ Doctor~ of } { 专业型 }, % no diff in English
+		{ academic } { The~ Degree~ of~ Doctor~ of~ } { 学术型 },
+		{ professional } { The~ Degree~ of~ Doctor~ of~ } { 专业型 }, % no diff in English
 		{ author } { Ph.D.~ Candidate } { 学\hfill 位\hfill 申\hfill 请\hfill 人 },
 %</def-d>
 		{ major } { Major } { 学\hfill 科\hfill 专\hfill 业 },

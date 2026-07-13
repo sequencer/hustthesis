@@ -3,6 +3,9 @@
 module = "hustthesis"
 typesetexe = "xelatex"
 packtdszip = true
+checkengines = {"xetex"}
+checkruns = 2
+testfiledir = "testfiles"
 -- sourcefiles = {"*.dtx"}
 unpackfiles = {"*.dtx"}
 installfiles = {"*.cls", "*.sty", "*.ins", "*.def", "*.cbx", "*.bbx"}

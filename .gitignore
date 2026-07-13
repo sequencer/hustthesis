@@ -6,6 +6,7 @@
 
 ## Intermediate files:
 *.bib
+!demo/ref.bib
 *.ins
 *.def
 *.cls

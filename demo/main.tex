@@ -54,7 +54,38 @@
 
 \section{第一节}
 
-文献标注示例 \TeX{}Book \cite{knuth1986TeXbook}.
+\subsection{第一小节}
+
+正文采用小四号、1.5 倍行距和两字符首行缩进。文献标注示例
+\TeX{}Book \cite{knuth1986TeXbook}。这里给出一个脚注示例\footnote{脚注正文采用小五号。}。
+
+\begin{figure}[htbp]
+  \centering
+  \rule{6cm}{2cm}
+  \caption{示例图题}
+\end{figure}
+
+\begin{table}[htbp]
+  \centering
+  \caption{示例三线表}
+  \begin{tabular}{cc}
+    \toprule
+    项目 & 数值 \\
+    \midrule
+    示例 & 1 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{equation}
+  E = mc^2
+\end{equation}
+
+\chapter{第二章}
+
+\section{第二节}
+
+用于检查正文一级目录项在不同章节之间保持一致。
 
 \backmatter
 
@@ -66,6 +97,12 @@
 
 \appendix
 
-\chapter{附录}
+\chapter{答辩委员会决议}
+
+\section{第一项}
+
+用于检查在 \verb|\backmatter| 之后调用 \verb|\appendix| 时仍能得到附录编号。
+
+\chapter{成果论文对应关系}
 
 \end{document}
