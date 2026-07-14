@@ -3848,7 +3848,9 @@
 %<*bbx>
 \RequireBibliographyStyle{gb7714-2025}
 \ExecuteBibliographyOptions{gbalign=left}
-\renewcommand*{\bibfont}{\fontsize{12bp}{15.6bp}\selectfont}
+\renewcommand*{\bibfont}{%
+	\fontsize{12bp}{15.6bp}\selectfont
+	\setlength{\emergencystretch}{1em}}
 \setlength{\bibitemsep}{0pt}
 %</bbx>
 %    \end{macrocode}
