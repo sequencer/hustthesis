@@ -1365,6 +1365,9 @@
 		left = 28.0106 mm,
 		right = 28.0106 mm,
 		headheight = 30 pt,
+		% 依据 Microsoft Office 导出的参考模板 PDF 校准页眉文字基线
+		% 与顶部双红线的纵向位置。
+		headsep = 17.415 pt,
 		footskip = 11.0067 mm,
 	}
 %    \end{macrocode}
@@ -1558,6 +1561,7 @@
 		\setCJKfamilyfont { zhhei } { SimHei } [#1]
 		\setCJKfamilyfont { zhfs } { FangSong } [#1]
 		\setCJKfamilyfont { zhkai } { KaiTi } [#1]
+		\setCJKfamilyfont { zhstkaiti } { STKaiti } [#1]
 		\@@_define_stzhongs:nn { STZhongsong } {#1}
 	}
 \cs_new:Npn \@@_loadfont_cjk_win:
@@ -1959,6 +1963,7 @@
 		\NewDocumentCommand \heiti { } { \CJKfamily { zhhei } }
 		\NewDocumentCommand \fangsong { } { \CJKfamily { zhfs } }
 		\NewDocumentCommand \kaishu { } { \CJKfamily { zhkai } }
+		\NewDocumentCommand \stkaiti { } { \CJKfamily { zhstkaiti } }
 	}
 %    \end{macrocode}
 % \end{macro}
@@ -2005,23 +2010,38 @@
 %    \begin{macrocode}
 %\bool_if:NF \g_@@_anonymous_bool
 %  {
+		\cs_new_protected:Npn \@@_typeset_header:
+			{
+				\bool_set_true:N \l_tmpa_bool
+				\tl_map_inline:Nn \c_@@_header_tl
+					{
+						\bool_if:NTF \l_tmpa_bool
+							{ \bool_set_false:N \l_tmpa_bool }
+							{ \skip_horizontal:n { 12.225 bp } }
+						##1
+					}
+				% Word 将末字后的字符间距计入居中宽度；保留等价的不可见
+				% 1.92 bp 末端宽度，使可见字形位置与 Office PDF 一致。
+				\skip_horizontal:n { 1.92 bp }
+			}
 		\chead
 			{
-				\fontsize { 18 bp } { 21.6 bp } \selectfont
-				% \ziju 的参数以当前字号的 em 为单位；18 bp 字号下
-				% 1 bp 字距对应 1/18 em。
-				\ziju { 0.055556 } \bfseries \kaishu
+				\fontsize { 16.5 bp } { 19.8 bp } \selectfont
+				\bfseries \stkaiti
 				\color_group_begin:
 				\color_select:n { headfoot }
-				\c_@@_header_tl
+				% Microsoft Office 导出的参考模板 PDF 中，相邻汉字
+				% 可见边界的平均间距为 12.225 bp。这里直接复现该间距，
+				% 不在 PDF 文本层保留空格字符。
+				\@@_typeset_header:
 				\color_group_end:
 			}
 %  }
 \fancyheadoffset [ L, R ] { 3.0116 mm }
-\tl_set:Nn { \headrulewidth } { 1 pt }
+\tl_set:Nn { \headrulewidth } { 1 bp }
 \tl_set:Nn { \headrule }
 	{
-		\skip_vertical:n { 3 pt }
+		\skip_vertical:n { 3.13 bp }
 		\@@_draw_hf_hline:n \headrulewidth
 		\skip_vertical:n \headrulewidth
 		\@@_draw_hf_hline:n \headrulewidth
@@ -2655,6 +2675,9 @@
 	{
 		content =
 			{
+				% DOCX 将三项信息存为三个 15 磅、1.5 倍行距的段落。
+				% 在此隔离正文设置的表格伸展系数，固定 27 磅基线间距。
+				\tl_set:Nn \arraystretch { 1 }
 				\skip_horizontal:n { \dim_eval:n { 25.4 mm - \tabcolsep } }
 				\begin{tabular}{l@{\hspace{0.5em}:\hspace{0.5em}}l}
 					\c_@@_name_author_en_tl & \g_@@_info_author_en_tl \\
@@ -3294,9 +3317,19 @@
 \dim_set:Nn \cmidrulewidth { 0.75 bp }
 %    \end{macrocode}
 %
-% 公式按章编号，编号使用中文全角圆括号。标准文档类已将公式计数器
-% 按章重置并放在行末，此处只调整括号外观。
+% 公式段落采用五号字。公式按章编号，编号使用中文全角圆括号。
+% 标准文档类已将公式计数器按章重置并将编号放在行末。
 %    \begin{macrocode}
+\cs_new_protected:Npn \@@_display_math_font:
+	{ \fontsize { 10.5 bp } { 15.75 bp } \selectfont }
+\clist_map_inline:nn
+	{ equation, equation*, align, align*, gather, gather*, multline, multline* }
+	{
+		\AddToHook { env / #1 / before }
+			{ \group_begin: \@@_display_math_font: }
+		\AddToHook { env / #1 / after }
+			{ \group_end: }
+	}
 \cs_set:Npn \tagform@ #1
 	{
 		\use:c
