@@ -1365,6 +1365,7 @@
 		left = 2.8 cm,
 		right = 2.8 cm,
 		headheight = 30 pt,
+		footskip = 11.0067 mm,
 	}
 %    \end{macrocode}
 
@@ -2007,7 +2008,9 @@
 		\chead
 			{
 				\fontsize { 18 bp } { 21.6 bp } \selectfont
-				\ziju { 0.45 } \bfseries \kaishu
+				% \ziju 的参数以当前字号的 em 为单位；18 bp 字号下
+				% 1 bp 字距对应 1/18 em。
+				\ziju { 0.055556 } \bfseries \kaishu
 				\color_group_begin:
 				\color_select:n { headfoot }
 				\c_@@_header_tl
@@ -2528,7 +2531,12 @@
 \@@_declare_component_instance:nnn { title zh } { type }
 	{
 		content = { \c_@@_name_type_zh_tl },
-		format = { \zihao { a } \bfseries \songti \ziju { 0.1 } },
+		format =
+			{
+				\zihao { a } \bfseries \@@_stzhongs:
+				% 45 bp 字号下的 3.3 bp 字距。
+				\ziju { 0.073333 }
+			},
 		bottom-skip = 0.5 cm,
 	}
 %    \end{macrocode}
@@ -2568,7 +2576,7 @@
 		format =
 			{
 				\zihao { 1 } \bfseries \songti
-				\@@_line_spread:n { 1.5 }
+				\@@_line_spread:n { 1.2 }
 			},
 		height = 4.8 cm,
 		bottom-skip = 1 cm,
@@ -2583,7 +2591,7 @@
 	{
 		content =
 			{
-				\tl_set:Nn \arraystretch { 2 }
+				\tl_set:Nn \arraystretch { 2.047244 }
 				\begin{tabular}{p{5em}@{：\hspace{1em}}l}
 					\c_@@_name_author_zh_tl & \g_@@_info_author_tl \\
 					\c_@@_name_major_zh_tl & \g_@@_info_major_tl \\
@@ -2617,7 +2625,7 @@
 				\zihao { -3 } \bfseries \rmfamily
 				\@@_line_spread:n { 1.5 }
 			},
-		bottom-skip = 5.5 cm,
+		bottom-skip = 4.5 cm,
 	}
 %    \end{macrocode}
 % \end{macro}
@@ -2631,6 +2639,7 @@
 		format =
 			{
 				\zihao { -2 } \bfseries \rmfamily
+				\addfontfeatures { LetterSpace = -1.111111 }
 				\@@_line_spread:n { 1.5 }
 			},
 		height = 3 cm,
@@ -2646,6 +2655,7 @@
 	{
 		content =
 			{
+				\skip_horizontal:n { \dim_eval:n { 25.4 mm - \tabcolsep } }
 				\begin{tabular}{l@{\hspace{0.5em}:\hspace{0.5em}}l}
 					\c_@@_name_author_en_tl & \g_@@_info_author_en_tl \\
 					\c_@@_name_major_en_tl & \g_@@_info_major_en_tl \\
@@ -2657,6 +2667,7 @@
 				\zihao { -3 } \bfseries \rmfamily
 				\@@_line_spread:n { 1.5 }
 			},
+		align = left,
 		bottom-skip = 4 cm,
 	}
 %    \end{macrocode}
@@ -2852,10 +2863,18 @@
 					{ \clist_item:Nn \c_@@_auth_decl_secr_clist { 1 } }
 				\skip_vertical:n { -1.2 cm }
 				\skip_horizontal:n { 6 em }
-				\clist_item:Nn \c_@@_auth_decl_secr_clist { 2 }
+				保\hspace{1em}密
+				\tl_if_empty:NTF \g_@@_info_secret_tl
+					{ \c_@@_emptybox_tl }
+					{ \c_@@_checkbox_tl }
+				，在\underline{\hspace{3em}}年解密后适用本授权书。
 				\tex_par:D
 				\skip_horizontal:n { 6 em }
-				\clist_item:Nn \c_@@_auth_decl_secr_clist { 3 }
+				不保密
+				\tl_if_empty:NTF \g_@@_info_secret_tl
+					{ \c_@@_checkbox_tl }
+					{ \c_@@_emptybox_tl }
+				。
 				\tex_par:D
 				\clist_item:Nn \c_@@_auth_decl_secr_clist { 4 }
 			},
@@ -3125,6 +3144,7 @@
 			{ chapter }
 			{ 1 em}
 			{ \fontsize { 14 bp } { 25 bp } \selectfont
+				\linespread { 1 } \selectfont
 				\bfseries \rmfamily \songti }
 			{ \mdseries \hfill (\thecontentspage) }
 		}
@@ -3134,6 +3154,7 @@
 			{ chapter }
 			{ 1 em }
 			{ \fontsize { 14 bp } { 25 bp } \selectfont
+				\linespread { 1 } \selectfont
 				\bfseries \rmfamily \songti }
 			{ \mdseries \hfill (\thecontentspage) }
 	}
@@ -3143,6 +3164,7 @@
 			{ chapter }
 			{ 1 em }
 			{ \fontsize { 14 bp } { 25 bp } \selectfont
+				\linespread { 1 } \selectfont
 				\bfseries \rmfamily \songti }
 			{ \mdseries \hfill (\thecontentspage) }
 	}
@@ -3154,12 +3176,14 @@
 \@@_toc_format:nnnn
 	{ section }
 	{ 2 em }
-	{ \fontsize { 14 bp } { 25 bp } \selectfont \rmfamily }
+	{ \fontsize { 14 bp } { 25 bp } \selectfont
+		\linespread { 1 } \selectfont \rmfamily }
 	{ \ddotfill (\thecontentspage) }
 \@@_toc_format:nnnn
 	{ subsection }
 	{ 2 em }
-	{ \fontsize { 14 bp } { 25 bp } \selectfont \rmfamily }
+	{ \fontsize { 14 bp } { 25 bp } \selectfont
+		\linespread { 1 } \selectfont \rmfamily }
 	{ \ddotfill (\thecontentspage) }
 %    \end{macrocode}
 %
@@ -3571,8 +3595,8 @@
 		{ author } { Candidate } { 学\hfill 位\hfill 申\hfill 请\hfill 人 },
 %</def-m>
 %<*def-d>
-		{ academic } { The~ Degree~ of~ Doctor~ of~ } { 学术型 },
-		{ professional } { The~ Degree~ of~ Doctor~ of~ } { 专业型 }, % no diff in English
+		{ academic } { The~ Degree~ of~ Doctor~ of~ Philosophy~ in~ } { 学术型 },
+		{ professional } { The~ Degree~ of~ Doctor~ in~ } { 专业型 },
 		{ author } { Ph.D.~ Candidate } { 学\hfill 位\hfill 申\hfill 请\hfill 人 },
 %</def-d>
 		{ major } { Major } { 学\hfill 科\hfill 专\hfill 业 },
