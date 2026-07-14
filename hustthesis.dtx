@@ -2811,17 +2811,23 @@
 %
 % \subsubsection{声明页}
 %
+% 下列间距依据 Microsoft Office 导出的参考 PDF 第 4 物理页校准：
+% 两个标题上边界分别为 129.950 bp 和 455.440 bp，首组签名基线间距
+% 为 29.28 bp，末组签名基线间距为 27.48 bp。
+%
 % \begin{macro}[int, module=hust/component/]{decl/orig title}
 % 独创性声明标题。
 %    \begin{macrocode}
 \@@_declare_component_instance:nnn { decl } { orig title }
 	{
-		content = { \c_@@_orig_decl_title_tl },
+		content =
+			{ \raisebox { -4.139 bp } [ 0 pt ] [ 0 pt ] { \c_@@_orig_decl_title_tl } },
 		format =
 			{
 				\zihao { 3 } \bfseries \heiti
 			},
-			bottom-lines = 1,
+		bottom-lines = 1,
+		bottom-skip = 5.785 bp,
 	}
 %    \end{macrocode}
 % \end{macro}
@@ -2834,6 +2840,7 @@
 		content = { \c_@@_orig_decl_text_tl },
 		align = justify,
 		bottom-lines = 1,
+		bottom-skip = 2.766 bp,
 	}
 %    \end{macrocode}
 % \end{macro}
@@ -2845,13 +2852,12 @@
 	{
 		content =
 			{
-				\clist_map_inline:Nn \c_@@_orig_decl_sign_clist
-					{
-						#1 \\
-					}
+				\clist_item:Nn \c_@@_orig_decl_sign_clist { 1 } \\[5.88 bp]
+				\clist_item:Nn \c_@@_orig_decl_sign_clist { 2 } \\
 			},
 		align = right,
 		bottom-lines = 3,
+		bottom-skip = -5.202 bp,
 	}
 %    \end{macrocode}
 % \end{macro}
@@ -2868,6 +2874,7 @@
 			},
 		top-lines = 1,
 		bottom-lines = 1,
+		bottom-skip = 1.646 bp,
 	}
 %    \end{macrocode}
 % \end{macro}
@@ -2879,7 +2886,7 @@
 	{
 		content = { \c_@@_auth_decl_text_tl },
 		align = justify,
-		bottom-skip = 0.5 cm,
+		bottom-skip = 17.339 bp,
 	}
 %    \end{macrocode}
 % \end{macro}
@@ -2893,8 +2900,11 @@
 			{
 				\mode_leave_vertical:
 				\hbox_overlap_right:n
-					{ \clist_item:Nn \c_@@_auth_decl_secr_clist { 1 } }
-				\skip_vertical:n { -1.2 cm }
+					{
+						\skip_horizontal:n { 2.22 bp }
+						\clist_item:Nn \c_@@_auth_decl_secr_clist { 1 }
+					}
+				\skip_vertical:n { -41.024 bp }
 				\skip_horizontal:n { 6 em }
 				保\hspace{1em}密
 				\tl_if_empty:NTF \g_@@_info_secret_tl
@@ -2913,6 +2923,7 @@
 			},
 		align = justify,
 		bottom-lines = 1,
+		bottom-skip = 0.936 bp,
 	}
 %    \end{macrocode}
 % \end{macro}
@@ -2923,11 +2934,11 @@
 	{
 		content =
 			{
-				\clist_map_inline:Nn \c_@@_auth_decl_sign_clist
-					{
-						#1
-						\tex_par:D
-					}
+				\clist_item:Nn \c_@@_auth_decl_sign_clist { 1 }
+				\tex_par:D
+				\skip_vertical:n { 4.08 bp }
+				\clist_item:Nn \c_@@_auth_decl_sign_clist { 2 }
+				\tex_par:D
 			},
 		align = justify,
 	}
@@ -2991,9 +3002,11 @@
 			},
 		format =
 			{
-				\zihao { -4 } \rmfamily
+				% Word 的 12 pt 宋体单倍行高为 15.6 pt；配合 1.5 倍
+				% 行距后，声明正文的 PDF 基线距为 23.4 pt。
+				\fontsize { 12 bp } { 15.6 bp } \selectfont \rmfamily
 				\@@_line_spread:n { 1.5 }
-			}
+			},
 	}
 \DeclareDocumentCommand \makedecl { }
 	{
@@ -3058,7 +3071,9 @@
 	{
 		\@@_clear_to_odd_page:
 		\chapter**{\c_@@_name_abstract_zh_tl}
-		\zihao { -4 } \rmfamily \songti
+		% Office PDF 中中文摘要的连续基线距为 22.56 pt；Word 的
+		% 1.45 倍行距需以其字体行高而非 LaTeX 默认 14.4 pt 计算。
+		\fontsize { 12 bp } { 15.558621 bp } \selectfont \rmfamily \songti
 		\@@_line_spread:n { 1.45 }
 		\dim_set:Nn \parindent { 2 em }
 		\skip_zero:N \parskip
@@ -3067,7 +3082,8 @@
 \NewDocumentEnvironment { abstract* } { }
 	{
 		\chapter**{\c_@@_name_abstract_en_tl}
-		\zihao { -4 } \rmfamily
+		% Times New Roman 12 pt 在 Word 中的单倍行高为 13.84 pt。
+		\fontsize { 12 bp } { 13.84 bp } \selectfont \rmfamily
 		\@@_line_spread:n { 1.5 }
 		\dim_set:Nn \parindent { 2 em }
 		\skip_zero:N \parskip
@@ -3227,6 +3243,9 @@
 	{
 		\pagestyle { fancy }
 		\pagenumbering { arabic }
+		% 明文规定 1.5 倍行距；Office PDF 中 12 pt 宋体正文的对应
+		% 连续基线距为 23.4 pt（15.6 pt 单倍行高乘 1.5）。
+		\fontsize { 12 bp } { 15.6 bp } \selectfont
 		\@@_toc_chapter_mainmatter:
 	}
 %    \end{macrocode}
