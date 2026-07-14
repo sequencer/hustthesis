@@ -1091,7 +1091,8 @@
 \dim_new:N \l_@@_ul_dim
 \cs_new_protected:Npn \@@_ul_to_wd:nnn #1#2#3
 	{
-		\hbox_overlap_right:n { \rule [ - 0.5 ex ] { #2 } { #1 } }
+		\hbox_overlap_right:n
+			{ \rule [ \dim_eval:n { - 0.5 ex + 0.67 bp } ] { #2 } { #1 } }
 		\hbox_to_wd:nn { #2 } { \tex_hfil:D #3 \tex_hfil:D }
 	}
 %    \end{macrocode}
@@ -2469,7 +2470,14 @@
 	}
 	{
 		\AssignTemplateKeys
-		\skip_vertical:N \l_@@_page_top_skip
+		% 页首普通 vskip 会被丢弃；\vspace* 会保留间距，但其零高
+		% 规则会让首行额外产生一个 \baselineskip，因此显式抵消。
+		\dim_compare:nNnT { \l_@@_page_top_skip } > { \c_zero_dim }
+			{
+				\tex_par:D
+				\vspace*
+					{ \dim_eval:n { \l_@@_page_top_skip - \baselineskip } }
+			}
 		\group_begin:
 			\exp_args:No \thispagestyle { \l_@@_page_style_tl }
 			\l_@@_page_format_tl
@@ -2515,26 +2523,60 @@
 	{
 		content =
 			{
-				\@@_title_zh_ids_aux:nn { 6em } { clc } % 3 em
-				\skip_horizontal:n { \linewidth - 19em }
-				\@@_title_zh_ids_aux:nn { 8em } { student_id } % 4 em
+				% 线长与左右栏位置取自 Office 参考 PDF。
+				\hbox_to_wd:nn { \linewidth }
+					{
+						\@@_title_zh_ids_aux:nn { 68.904 bp } { clc }
+						\skip_horizontal:n { \linewidth - 18.6111 em }
+						\@@_title_zh_ids_right_aux:n { student_id }
+						\tex_hfil:D
+					}
 				\tex_par:D
-				\@@_title_zh_ids_aux:nn { 5em } { school_id } % 4 em
-				\skip_horizontal:n { \linewidth - 19em }
-				\@@_title_zh_ids_aux:nn { 8em } { secret } % 4 em
+				\hbox_to_wd:nn { \linewidth }
+					{
+						\@@_title_zh_school_id:
+						\skip_horizontal:n { \linewidth - 18.62075 em }
+						\@@_title_zh_ids_right_aux:n { secret }
+						\tex_hfil:D
+					}
 			},
 		format =
 			{
 				\zihao{-4} \bfseries \rmfamily \songti
-				\@@_line_spread:n { 1.5 }
+				% Office 参考 PDF 的两行字段顶端分别为 133.832 bp
+				% 和 153.872 bp，即连续基线距为 20.04 bp。
+				\@@_line_spread:n { 1.3916667 }
 			},
-		bottom-skip = 2 cm,
+		bottom-skip = 1.6711 cm,
 	}
 \cs_new:Npn \@@_title_zh_ids_aux:nn #1#2
 	{
 		\tl_use:c { c_@@_name_ #2 _tl }
-		\@@_ul_to_wd:nnn { 1 pt } { #1 }
+		\@@_ul_to_wd:nnn { 1.5 bp } { #1 }
 			{ \tl_use:c { g_@@_info_ #2 _tl } }
+	}
+\cs_new:Npn \@@_title_zh_ids_right_aux:n #1
+	{
+		\tl_use:c { c_@@_name_ #1 _tl }
+		\skip_horizontal:n { 0.27 bp }
+		\@@_ul_to_wd:nnn { 1.5 bp } { 94.159 bp }
+			{ \tl_use:c { g_@@_info_ #1 _tl } }
+	}
+\cs_new:Npn \@@_title_zh_school_id:
+	{
+		\c_@@_name_school_id_tl
+		\skip_horizontal:n { 3.356 bp }
+		\hbox_overlap_right:n
+			{
+				\rule [ \dim_eval:n { -0.5 ex + 0.67 bp } ]
+					{ 53.664 bp } { 1.5 bp }
+			}
+		\hbox_to_wd:nn { 53.664 bp }
+			{
+				{ \addfontfeatures { LetterSpace = 25 }
+					\g_@@_info_school_id_tl }
+				\tex_hfil:D
+			}
 	}
 %    \end{macrocode}
 % \end{macro}
@@ -2547,9 +2589,11 @@
 		content =
 			{
 				\mode_leave_vertical:
+				% 保留 hustvisual 的矢量校名字样；其视觉中心按
+				% Microsoft Office 导出的参考 PDF 校准。
 				\hustvi [ height = 1.4 cm, temp = black, ] { name }
 			},
-		bottom-skip = 0.5 cm,
+		bottom-skip = -0.3217 cm,
 	}
 %    \end{macrocode}
 % \end{macro}
@@ -2567,7 +2611,7 @@
 				% 45 bp 字号下的 3.3 bp 字距。
 				\ziju { 0.073333 }
 			},
-		bottom-skip = 0.5 cm,
+		bottom-skip = 1.1840 cm,
 	}
 %    \end{macrocode}
 % \end{macro}
@@ -2592,7 +2636,7 @@
 				）
 			},
 		format = { \zihao { -3 } \c_@@_name_degree_font_tl },
-		bottom-skip = 1.5 cm,
+		bottom-skip = 2.0709 cm,
 	}
 %    \end{macrocode}
 % \end{macro}
@@ -2606,9 +2650,11 @@
 		format =
 			{
 				\zihao { 1 } \bfseries \songti
-				\@@_line_spread:n { 1.2 }
+				% Word 中“1.2 倍”自动行距在 26 bp 宋体下导出为
+				% 40.44 bp 的连续基线距。
+				\fontsize { 26 bp } { 40.44 bp } \selectfont
 			},
-		height = 4.8 cm,
+		height = 3.1129 cm,
 		bottom-skip = 1 cm,
 	}
 %    \end{macrocode}
@@ -2622,11 +2668,15 @@
 		content =
 			{
 				\tl_set:Nn \arraystretch { 2.047244 }
-				\begin{tabular}{p{5em}@{：\hspace{1em}}l}
-					\c_@@_name_author_zh_tl & \g_@@_info_author_tl \\
-					\c_@@_name_major_zh_tl & \g_@@_info_major_tl \\
-					\c_@@_name_supervisor_zh_tl & \g_@@_info_supervisor_tl \\
-					\c_@@_name_date_tl & \g_@@_info_date_tl \\
+				% Word 隐藏表格的标签列和值区分别按 75.36 bp 和
+				% 151.176 bp 复现。XeCJK 会压缩全角冒号的排版宽度，
+				% 因而在冒号后补 11.31 bp，使标签和值的起点同时对齐 PDF。
+				\begin{tabular}
+					{@{}p{75.36bp}@{}l@{\hspace{11.31bp}}p{151.176bp}@{}}
+					\c_@@_name_author_zh_tl & ： & \g_@@_info_author_tl \\
+					\c_@@_name_major_zh_tl & ： & \g_@@_info_major_tl \\
+					\c_@@_name_supervisor_zh_tl & ： & \g_@@_info_supervisor_tl \\
+					\c_@@_name_date_tl & ： & \g_@@_info_date_tl \\
 				\end{tabular}
 			},
 		format = { \zihao { -3 } \bfseries \rmfamily \songti },
@@ -2953,6 +3003,10 @@
 \@@_declare_page_instance:nn { title zh }
 	{
 		components = { identifiers, logo, type, degree, title, info, },
+		% Office 参考 PDF 中封面首行文字顶端为 133.832 bp。
+		% 页模板进入时的 21.6 bp 行距与字段组件的 20.04 bp 行距
+		% 相差 1.56 bp，因此请求 6.145 bp 得到 4.585 bp 净位移。
+		top-skip = 6.145 bp,
 	}
 \DeclareDocumentCommand \makezhtitle { }
 	{
@@ -3662,7 +3716,7 @@
 		{ author } { Ph.D.~ Candidate } { 学\hfill 位\hfill 申\hfill 请\hfill 人 },
 %</def-d>
 		{ major } { Major } { 学\hfill 科\hfill 专\hfill 业 },
-		{ supervisor } { Supervisor } { 指\hfill 导\hfill 老\hfill 师 },
+		{ supervisor } { Supervisor } { 指\hfill 导\hfill 教\hfill 师 },
 	}
 	{ \@@_define_name:nnn #1 }
 %    \end{macrocode}
