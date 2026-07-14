@@ -4073,6 +4073,13 @@
 %
 % 覆盖原 |manual| 的别名。
 %    \begin{macrocode}
+% 学校参考模板要求类型标识写作“[博士学位论文]”或“[硕士学位论文]”，
+% 不使用 BibTeX 数据中的英文类型键名。
+\DeclareFieldFormat[thesis]{hustthesistype}{%
+	\printdelim{titletypedelim}%
+	\printtext{\gbleftbracket\nobreak
+		\ifbibxstring{#1cn}{\bibxstring{#1cn}}{#1}%
+		\nobreak\gbrightbracket}}
 \DeclareBibliographyDriver{thesis}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
@@ -4083,7 +4090,7 @@
 %    \begin{macrocode}
 	%\usebibmacro{title}%
 	\printfield[titlecase]{title}%
-	\printfield[gbtypeflag]{type}
+	\printfield[hustthesistype]{type}
 	\iftoggle{bbx:gbstrict}{}{%
 	\newunit%
 	\printlist{language}%
