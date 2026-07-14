@@ -2052,11 +2052,21 @@
 %    \begin{macrocode}
 \cfoot { \zihao{-5} \thepage }
 \fancyfootoffset [ L, R ] { 3.9731 mm }
-\tl_set:Nn { \footrulewidth } { 0.75 pt }
+\tl_set:Nn { \footrulewidth } { 0.75 bp }
 \tl_set:Nn { \footrule }
 	{
-		\@@_draw_hf_hline:n \footrulewidth
-		\skip_vertical:n { 3 pt }
+		% Office 参考 PDF 中，下部红线相对居中的页码向左偏移
+		% 0.588 bp。仅移动红线；页脚盒仍保持对称，页码继续居中。
+		\skip_vertical:n { -2.897 bp }
+		\tex_moveleft:D 0.588 bp
+		\tex_vbox:D
+			{
+				{
+					\color_select:n { headfoot }
+					\tex_hrule:D height \footrulewidth width \headwidth
+				}
+			}
+		\skip_vertical:n { 5.886 bp }
 	}
 %    \end{macrocode}
 %
